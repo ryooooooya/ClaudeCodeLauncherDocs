@@ -5,6 +5,40 @@ bootstrap guide の生成・更新と、各種設定の参照に使う。
 
 ---
 
+## 配布とセレクター
+
+ドキュメントは GitHub リポジトリで管理・配布する。
+
+- リポジトリ: https://github.com/ryooooooya/ClaudeCodeLauncherDocs
+- セレクター: https://ryooooooya.github.io/ClaudeCodeLauncherDocs/
+
+セレクターでフレームワーク・プロジェクト特徴・セキュリティ形式を選ぶと、Claude Code に貼り付けるだけでドキュメントの取得・配置・セットアップ開始ができるプロンプトが生成される。
+
+### ドキュメントの配置先
+
+セレクターは以下のルールでドキュメントの配置先を決定する。
+
+| 配置先 | 役割 | 読み込みタイミング |
+|---|---|---|
+| `.claude/rules/` | 常時適用されるルール | 毎セッション自動読み込み |
+| `.claude/docs/` | セットアップ手順・参照ドキュメント | 必要に応じて参照 |
+| `docs/` | 人間向け解説・リファレンス | Claude Code の指示ではない |
+
+具体的なマッピング:
+
+| ファイル | 配置先 | 理由 |
+|---|---|---|
+| `base_security_env.md` | `.claude/rules/` | 禁止事項を常時適用 |
+| `base_security_code.md` | `.claude/rules/` | セキュアコーディングを常時適用 |
+| `base_security_npm.md` | `.claude/rules/` | npm セキュリティを常時適用 |
+| `base_ux_checklist_critical.md` | `.claude/rules/` | UX 最重要ルールを常時適用 |
+| `base_security_env_guide.md` | `docs/` | 人間向け解説 |
+| `base_security_code_guide.md` | `docs/` | 人間向け解説 |
+| `base_claude_md_knowledge.md` | `docs/` | 人間向けリファレンス |
+| その他すべて | `.claude/docs/` | セットアップ・参照用 |
+
+---
+
 ## ファイル構成
 
 ### base_*（フレームワーク非依存）
@@ -41,6 +75,13 @@ bootstrap guide の生成・更新と、各種設定の参照に使う。
 | `project_bootstrap_guide_nextjs.md` | `framework_nextjs.md` | Next.js (App Router) + shadcn/ui |
 | `project_bootstrap_guide_astro.md` | `framework_astro.md` | Astro + Tailwind（CMS はプレースホルダー） |
 | `project_bootstrap_guide_wordpress.md` | `framework_wordpress.md` | WordPress + SWELL 子テーマ + wp-env |
+
+### セレクター・設定ファイル
+
+| ファイル | 内容 |
+|---|---|
+| `index.html` | ドキュメントセレクター（GitHub Pages で公開） |
+| `.nojekyll` | Jekyll 処理をスキップ（削除しないこと） |
 
 ---
 
@@ -110,6 +151,7 @@ base_security_env.md を更新しました。
 1. 該当の `base_*` を更新する
 2. その内容を使っているすべての bootstrap guide を再生成する
 3. このプロジェクト知識のファイルを差し替える
+4. GitHub リポジトリに push する
 
 どの bootstrap guide が影響を受けるかは「フレームワーク間の主な差異」表を参照。
 `base_harness.md` や `base_security_env.md` などフレームワーク非依存のものを変えた場合は、原則すべての bootstrap guide が再生成の対象になる。
@@ -119,19 +161,35 @@ base_security_env.md を更新しました。
 1. 該当の `framework_*` を更新する
 2. 対応する bootstrap guide のみ再生成する（他のフレームワークには影響しない）
 3. このプロジェクト知識のファイルを差し替える
+4. GitHub リポジトリに push する
+
+### ファイルを追加・削除・リネームしたとき
+
+1. このREADMEのファイル一覧を更新する
+2. `index.html` の `DOC_DB` と `FEATURES` を更新する（配置先マッピングとセレクターの選択肢）
+3. このプロジェクト知識のファイルを差し替える
+4. GitHub リポジトリに push する
+
+`index.html` の更新箇所:
+
+- `DOC_DB`: ファイル名 → 配置先・説明のマッピング。追加・削除・リネーム時に編集
+- `FEATURES`: フレームワークごとの選択肢。新しいオプション機能を追加する場合に編集
 
 ### 新しいフレームワーク・CMS を追加したとき
 
 1. `framework_{name}.md` を新規作成する
 2. 対応する `project_bootstrap_guide_{name}.md` を生成する
 3. このREADMEのファイル一覧と bootstrap guide 一覧・フレームワーク間の差異表を更新する
-4. このプロジェクト知識に3ファイルをまとめて追加する
+4. `index.html` の `FEATURES`・`DOC_DB`・`selectFw` にフレームワークを追加する
+5. このプロジェクト知識にファイルをまとめて追加する
+6. GitHub リポジトリに push する
 
 ### ベストプラクティス・外部情報を反映したとき
 
 1. 反映先の `base_*` を特定して更新する
 2. 影響する bootstrap guide を再生成する
 3. このプロジェクト知識のファイルを差し替える
+4. GitHub リポジトリに push する
 
 「どの `base_*` に反映すべきか」判断に迷う場合はこのプロジェクトで相談すること。
 
@@ -139,6 +197,12 @@ base_security_env.md を更新しました。
 
 - ファイルの追加・削除・リネームをしたとき
 - 運用の考え方が変わったとき
+- 配置先マッピングを変更したとき
+
+### 注意事項
+
+- `.nojekyll` を削除しない（Jekyll が .md ファイルの `{{ }}` を Liquid テンプレートと誤認してビルドエラーになる）
+- `index.html` の `BASE_RAW` URL を変更しない（セレクターが生成する curl コマンドの取得元）
 
 ---
 
