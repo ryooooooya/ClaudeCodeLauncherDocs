@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Launcher Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root {
+  --bg: #fafaf9;
+  --bg-surface: #ffffff;
+  --bg-muted: #f3f2ee;
+  --bg-active: #e8f4fd;
+  --text: #1c1c1a;
+  --text-secondary: #6b6b66;
+  --text-tertiary: #9a9a94;
+  --text-accent: #1a6fb5;
+  --border: #e2e1dc;
+  --border-hover: #c8c7c1;
+  --border-accent: #1a6fb5;
+  --danger: #b5401a;
+  --danger-bg: #fdf2ee;
+  --info-bg: #e8f4fd;
+  --radius: 8px;
+  --font-sans: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161614;
+    --bg-surface: #1e1e1c;
+    --bg-muted: #252523;
+    --bg-active: #15293a;
+    --text: #e5e5e0;
+    --text-secondary: #9a9a94;
+    --text-tertiary: #6b6b66;
+    --text-accent: #5aabde;
+    --border: #2e2e2b;
+    --border-hover: #454542;
+    --border-accent: #5aabde;
+    --danger: #e27050;
+    --danger-bg: #2a1a14;
+    --info-bg: #15293a;
+    --radius: 8px;
+  }
+}
+html { font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+a { color: var(--text-accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}
+
+header {
+  margin-bottom: 3rem;
+}
+.site-title {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.site-title span { color: var(--text-tertiary); }
+.site-desc {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  max-width: 540px;
+}
+
+h2 {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+}
+
+.step { margin-bottom: 2rem; }
+.step-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.step-hint {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin-bottom: 0.75rem;
+}
+
+.btn-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.btn-group-2 { grid-template-columns: 1fr 1fr; }
+
+button, .btn {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg-surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  text-align: left;
+}
+button:hover { border-color: var(--border-hover); background: var(--bg-muted); }
+button.active {
+  background: var(--bg-active);
+  border-color: var(--border-accent);
+  color: var(--text-accent);
+}
+
+.check-list { display: flex; flex-direction: column; gap: 4px; }
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.1s;
+}
+.check-item:hover { background: var(--bg-muted); }
+.check-item input { margin-top: 3px; flex-shrink: 0; accent-color: var(--text-accent); }
+.check-item .desc { font-size: 0.75rem; color: var(--text-tertiary); }
+
+.result {
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
+.result.hidden { display: none; }
+
+.dest-header {
+  margin: 1rem 0 0.35rem;
+  padding: 0.3rem 0.5rem;
+  background: var(--bg-muted);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.dest-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.dest-label.rules { color: var(--danger); }
+.dest-label.docs { color: var(--text-accent); }
+.dest-label.human { color: var(--text-secondary); }
+.dest-note { font-size: 0.72rem; color: var(--text-tertiary); }
+
+.file-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius);
+  gap: 0.5rem;
+  transition: background 0.1s;
+}
+.file-row:hover { background: var(--bg-muted); }
+.file-name {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text);
+  white-space: nowrap;
+}
+.file-desc {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  text-align: right;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.summary {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 0.75rem;
+}
+
+.actions { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.actions button {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+}
+
+.prompt-preview {
+  margin-top: 1rem;
+}
+.prompt-preview.hidden { display: none; }
+.prompt-label { font-size: 0.72rem; color: var(--text-tertiary); margin-bottom: 0.35rem; }
+.prompt-box {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  background: var(--bg-muted);
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  line-height: 1.5;
+}
+
+footer {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+footer a { color: var(--text-tertiary); }
+footer a:hover { color: var(--text-accent); }
+
+@media (max-width: 480px) {
+  .container { padding: 2rem 1rem 3rem; }
+  .btn-group { grid-template-columns: 1fr; }
+  .btn-group-2 { grid-template-columns: 1fr; }
+  .file-row { flex-direction: column; gap: 0; }
+  .file-desc { text-align: left; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="site-title">ClaudeCodeLauncherDocs <span>/ selector</span></div>
+    <p class="site-desc">Claude Code プロジェクトに必要なドキュメントセットを選んで、配置用のプロンプトを生成します。</p>
+  </header>
+
+  <section>
+    <h2>Configure</h2>
+
+    <div class="step" id="step1">
+      <p class="step-label">1. フレームワーク</p>
+      <p class="step-hint">bootstrap guide と framework 固有ドキュメントが決まります</p>
+      <div class="btn-group" id="fw-buttons">
+        <button onclick="selectFw('nextjs')" id="btn-nextjs">Next.js</button>
+        <button onclick="selectFw('astro')" id="btn-astro">Astro</button>
+        <button onclick="selectFw('wordpress')" id="btn-wordpress">WordPress</button>
+      </div>
+    </div>
+
+    <div class="step hidden" id="step2">
+      <p class="step-label">2. プロジェクトの特徴</p>
+      <p class="step-hint">該当するものを選んでください（複数可）</p>
+      <div class="check-list" id="feature-checks"></div>
+    </div>
+
+    <div class="step hidden" id="step3">
+      <p class="step-label">3. セキュリティドキュメントの形式</p>
+      <p class="step-hint">Claude Code 向け指示と人間向けガイドがあります</p>
+      <div class="btn-group btn-group-2" id="sec-buttons">
+        <button onclick="selectSecMode('claude')" id="btn-sec-claude">指示のみ</button>
+        <button onclick="selectSecMode('both')" id="btn-sec-both">指示 + 人間向けガイド</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="result hidden" id="result">
+    <h2>Result</h2>
+    <div id="result-list"></div>
+    <div class="actions">
+      <button onclick="copyPrompt()" id="copy-btn">プロンプトをコピー</button>
+      <button onclick="togglePreview()">プレビュー</button>
+    </div>
+    <div class="prompt-preview hidden" id="prompt-preview">
+      <p class="prompt-label">Claude Code に貼り付けるプロンプト:</p>
+      <pre class="prompt-box" id="prompt-text"></pre>
+    </div>
+  </section>
+
+  <footer>
+    <a href="https://github.com/ryooooooya/ClaudeCodeLauncherDocs">GitHub</a> · ドキュメントの詳細は README.md を参照
+  </footer>
+</div>
+
+<script>
+const BASE_RAW = 'https://raw.githubusercontent.com/ryooooooya/ClaudeCodeLauncherDocs/main';
+const state = { fw: null, features: new Set(), secMode: null, docs: [] };
+
+const FEATURES = {
+  nextjs: [
+    { id: 'ui', label: 'UI コンポーネントの実装がある', desc: 'UX チェックリスト・UI モーション' },
+    { id: 'a11y', label: 'アクセシビリティ対応が必要', desc: 'Playwright + jest-axe セットアップ' },
+    { id: 'codex', label: 'Codex でレビューしたい', desc: '計画・コードレビュー連携' },
+    { id: 'npm', label: '外部 npm パッケージを多用する', desc: 'サプライチェーンセキュリティ' },
+    { id: 'skill', label: 'カスタム Skill を作る予定', desc: 'SKILL.md 生成プロンプト' },
+    { id: 'claude_md', label: 'CLAUDE.md の設計知識がほしい', desc: '設計・運用ナレッジ' },
+  ],
+  astro: [
+    { id: 'ui', label: 'UI コンポーネントの実装がある', desc: 'UX チェックリスト・UI モーション' },
+    { id: 'a11y', label: 'アクセシビリティ対応が必要', desc: 'Playwright + jest-axe セットアップ' },
+    { id: 'codex', label: 'Codex でレビューしたい', desc: '計画・コードレビュー連携' },
+    { id: 'npm', label: '外部 npm パッケージを多用する', desc: 'サプライチェーンセキュリティ' },
+    { id: 'skill', label: 'カスタム Skill を作る予定', desc: 'SKILL.md 生成プロンプト' },
+    { id: 'claude_md', label: 'CLAUDE.md の設計知識がほしい', desc: '設計・運用ナレッジ' },
+  ],
+  wordpress: [
+    { id: 'ui', label: 'CSS アニメーション・UI の質感にこだわる', desc: 'UI モーション（CSS パターンを参考適用）' },
+    { id: 'codex', label: 'Codex でレビューしたい', desc: '計画・コードレビュー連携' },
+    { id: 'skill', label: 'カスタム Skill を作る予定', desc: 'SKILL.md 生成プロンプト' },
+    { id: 'claude_md', label: 'CLAUDE.md の設計知識がほしい', desc: '設計・運用ナレッジ' },
+  ]
+};
+
+const DOC_DB = {
+  'project_bootstrap_guide_nextjs.md':   { dest: '.claude/docs/',  desc: 'Next.js セットアップ手順（Phase 0〜）' },
+  'project_bootstrap_guide_astro.md':    { dest: '.claude/docs/',  desc: 'Astro セットアップ手順（Phase 0〜）' },
+  'project_bootstrap_guide_wordpress.md':{ dest: '.claude/docs/',  desc: 'WordPress + SWELL セットアップ手順' },
+  'framework_nextjs.md':    { dest: '.claude/docs/',  desc: 'Next.js 固有の設定・規約' },
+  'framework_astro.md':     { dest: '.claude/docs/',  desc: 'Astro 固有の設定・規約' },
+  'framework_wordpress.md': { dest: '.claude/docs/',  desc: 'WordPress / SWELL 固有の設定・規約' },
+  'base_harness.md':        { dest: '.claude/docs/',  desc: 'Biome + Oxlint + Lefthook + フック設定' },
+  'base_security_env.md':   { dest: '.claude/rules/', desc: 'セキュリティ環境設定（禁止事項は常時適用）' },
+  'base_security_env_guide.md': { dest: 'docs/',      desc: 'セキュリティ環境設定（人間向け解説）' },
+  'base_security_code.md':  { dest: '.claude/rules/', desc: 'セキュアコーディングルール（常時適用）' },
+  'base_security_code_guide.md': { dest: 'docs/',     desc: 'セキュアコーディングルール（人間向け解説）' },
+  'base_security_npm.md':   { dest: '.claude/rules/', desc: 'npm サプライチェーンセキュリティ（常時適用）' },
+  'base_codex_review.md':   { dest: '.claude/docs/',  desc: 'Codex 計画・コードレビュー連携' },
+  'base_a11y.md':           { dest: '.claude/docs/',  desc: 'a11y セットアップ（Playwright + jest-axe）' },
+  'base_ux_checklist_critical.md': { dest: '.claude/rules/', desc: 'UX チェックリスト CRITICAL（常時適用）' },
+  'base_ux_checklist_high.md':    { dest: '.claude/docs/',   desc: 'UX チェックリスト HIGH（UI 実装・レビュー時）' },
+  'base_ux_checklist_medium.md':  { dest: '.claude/docs/',   desc: 'UX チェックリスト MEDIUM / LOW' },
+  'base_ui_motion.md':      { dest: '.claude/docs/',  desc: 'UI モーション・インタラクション' },
+  'base_skill_md_prompt.md':{ dest: '.claude/docs/',  desc: 'SKILL.md 生成プロンプト' },
+  'base_claude_md_knowledge.md': { dest: 'docs/',     desc: 'CLAUDE.md 設計・運用ナレッジ（人間向け参照）' },
+};
+
+const DEST_META = {
+  '.claude/rules/': { label: '.claude/rules/', note: '毎セッション自動読み込み。常時適用されるルール', cls: 'rules' },
+  '.claude/docs/':  { label: '.claude/docs/',  note: 'セットアップ手順・参照ドキュメント', cls: 'docs' },
+  'docs/':          { label: 'docs/',           note: '人間向け解説・リファレンス', cls: 'human' },
+};
+const DEST_ORDER = ['.claude/rules/', '.claude/docs/', 'docs/'];
+
+function selectFw(fw) {
+  state.fw = fw;
+  state.features.clear();
+  document.querySelectorAll('#fw-buttons button').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + fw).classList.add('active');
+  const el = document.getElementById('feature-checks');
+  el.innerHTML = '';
+  FEATURES[fw].forEach(f => {
+    const label = document.createElement('label');
+    label.className = 'check-item';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.onchange = () => { cb.checked ? state.features.add(f.id) : state.features.delete(f.id); updateResult(); };
+    const span = document.createElement('span');
+    span.innerHTML = f.label + '<br><span class="desc">' + f.desc + '</span>';
+    label.appendChild(cb);
+    label.appendChild(span);
+    el.appendChild(label);
+  });
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('step3').classList.remove('hidden');
+  if (state.secMode) updateResult();
+}
+
+function selectSecMode(mode) {
+  state.secMode = mode;
+  document.querySelectorAll('#sec-buttons button').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-sec-' + mode).classList.add('active');
+  updateResult();
+}
+
+function updateResult() {
+  if (!state.fw || !state.secMode) return;
+  document.getElementById('result').classList.remove('hidden');
+  const docs = [];
+  const fw = state.fw;
+  const isWP = fw === 'wordpress';
+  docs.push('base_security_env.md');
+  if (!isWP) docs.push('base_security_code.md');
+  if (state.features.has('npm') && !isWP) docs.push('base_security_npm.md');
+  if (state.features.has('ui')) docs.push('base_ux_checklist_critical.md');
+  docs.push('project_bootstrap_guide_' + fw + '.md');
+  docs.push('framework_' + fw + '.md');
+  if (!isWP) docs.push('base_harness.md');
+  if (state.features.has('ui')) {
+    docs.push('base_ux_checklist_high.md');
+    docs.push('base_ux_checklist_medium.md');
+    docs.push('base_ui_motion.md');
+  }
+  if (state.features.has('a11y') && !isWP) docs.push('base_a11y.md');
+  if (state.features.has('codex')) docs.push('base_codex_review.md');
+  if (state.features.has('skill')) docs.push('base_skill_md_prompt.md');
+  if (state.secMode === 'both') {
+    docs.push('base_security_env_guide.md');
+    if (!isWP) docs.push('base_security_code_guide.md');
+  }
+  if (state.features.has('claude_md')) docs.push('base_claude_md_knowledge.md');
+  docs.sort((a, b) => DEST_ORDER.indexOf(DOC_DB[a].dest) - DEST_ORDER.indexOf(DOC_DB[b].dest));
+
+  const el = document.getElementById('result-list');
+  el.innerHTML = '';
+  let cur = '';
+  const counts = {};
+  docs.forEach(d => { const dest = DOC_DB[d].dest; counts[dest] = (counts[dest] || 0) + 1; });
+  docs.forEach(d => {
+    const info = DOC_DB[d];
+    if (info.dest !== cur) {
+      cur = info.dest;
+      const meta = DEST_META[cur];
+      const h = document.createElement('div');
+      h.className = 'dest-header';
+      h.innerHTML = '<span class="dest-label ' + meta.cls + '">' + meta.label + '</span><span class="dest-note">' + meta.note + '</span>';
+      el.appendChild(h);
+    }
+    const row = document.createElement('div');
+    row.className = 'file-row';
+    row.innerHTML = '<span class="file-name">' + d + '</span><span class="file-desc">' + info.desc + '</span>';
+    el.appendChild(row);
+  });
+  const s = document.createElement('p');
+  s.className = 'summary';
+  const parts = DEST_ORDER.filter(d => counts[d]).map(d => DEST_META[d].label + ' ' + counts[d]);
+  s.textContent = docs.length + ' files (' + parts.join(', ') + ')';
+  el.appendChild(s);
+  state.docs = docs;
+  document.getElementById('prompt-text').textContent = buildPrompt();
+}
+
+function buildPrompt() {
+  const grouped = {};
+  state.docs.forEach(d => {
+    const dest = DOC_DB[d].dest;
+    if (!grouped[dest]) grouped[dest] = [];
+    grouped[dest].push(d);
+  });
+  let p = 'GitHub リポジトリからドキュメントを取得して配置してください。\n\n';
+  p += 'BASE_URL="' + BASE_RAW + '"\n\n';
+  DEST_ORDER.forEach(dest => {
+    if (!grouped[dest]) return;
+    p += '# ' + dest + '\n';
+    p += 'mkdir -p ' + dest + '\n';
+    grouped[dest].forEach(f => {
+      p += 'curl -sL "${BASE_URL}/' + f + '" -o ' + dest + f + '\n';
+    });
+    p += '\n';
+  });
+  p += 'ダウンロード後、project_bootstrap_guide に従ってセットアップを進めてください。';
+  return p;
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(buildPrompt());
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = 'コピーしました';
+  setTimeout(() => btn.textContent = 'プロンプトをコピー', 1500);
+}
+
+function togglePreview() {
+  document.getElementById('prompt-preview').classList.toggle('hidden');
+}
+</script>
+</body>
+</html>
