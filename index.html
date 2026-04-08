@@ -311,6 +311,7 @@ const FEATURES = {
     { id: 'a11y', label: 'アクセシビリティ対応が必要', desc: 'Playwright + jest-axe セットアップ' },
     { id: 'codex', label: 'Codex でレビューしたい', desc: '計画・コードレビュー連携' },
     { id: 'npm', label: '外部 npm パッケージを多用する', desc: 'サプライチェーンセキュリティ' },
+    { id: 'storybook', label: 'Storybook でコンポーネント管理する', desc: 'MCP server + Manifest 連携' },
     { id: 'skill', label: 'カスタム Skill を作る予定', desc: 'SKILL.md 生成プロンプト' },
     { id: 'claude_md', label: 'CLAUDE.md の設計知識がほしい', desc: '設計・運用ナレッジ' },
   ],
@@ -334,7 +335,7 @@ const DOC_DB = {
   'project_bootstrap_guide_nextjs.md':   { dest: '.claude/docs/',  desc: 'Next.js セットアップ手順（Phase 0〜）' },
   'project_bootstrap_guide_astro.md':    { dest: '.claude/docs/',  desc: 'Astro セットアップ手順（Phase 0〜）' },
   'project_bootstrap_guide_wordpress.md':{ dest: '.claude/docs/',  desc: 'WordPress + SWELL セットアップ手順' },
-  'framework_nextjs.md':    { dest: '.claude/docs/',  desc: 'Next.js 固有の設定・規約' },
+  'framework_nextjs.md':    { dest: '.claude/docs/',  desc: 'Next.js + Storybook 固有の設定・規約' },
   'framework_astro.md':     { dest: '.claude/docs/',  desc: 'Astro 固有の設定・規約' },
   'framework_wordpress.md': { dest: '.claude/docs/',  desc: 'WordPress / SWELL 固有の設定・規約' },
   'base_harness.md':        { dest: '.claude/docs/',  desc: 'Biome + Oxlint + Lefthook + フック設定' },
@@ -349,6 +350,7 @@ const DOC_DB = {
   'base_ux_checklist_high.md':    { dest: '.claude/docs/',   desc: 'UX チェックリスト HIGH（UI 実装・レビュー時）' },
   'base_ux_checklist_medium.md':  { dest: '.claude/docs/',   desc: 'UX チェックリスト MEDIUM / LOW' },
   'base_ui_motion.md':      { dest: '.claude/docs/',  desc: 'UI モーション・インタラクション' },
+  'base_storybook.md':      { dest: '.claude/docs/',  desc: 'Storybook + AI 連携（MCP server + Manifest）' },
   'base_skill_md_prompt.md':{ dest: '.claude/docs/',  desc: 'SKILL.md 生成プロンプト' },
   'base_claude_md_knowledge.md': { dest: 'docs/',     desc: 'CLAUDE.md 設計・運用ナレッジ（人間向け参照）' },
 };
@@ -410,6 +412,7 @@ function updateResult() {
     docs.push('base_ui_motion.md');
   }
   if (state.features.has('a11y') && !isWP) docs.push('base_a11y.md');
+  if (state.features.has('storybook') && !isWP) docs.push('base_storybook.md');
   if (state.features.has('codex')) docs.push('base_codex_review.md');
   if (state.features.has('skill')) docs.push('base_skill_md_prompt.md');
   if (state.secMode === 'both') {

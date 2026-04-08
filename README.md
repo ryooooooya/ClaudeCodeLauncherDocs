@@ -57,6 +57,7 @@ bootstrap guide の生成・更新と、各種設定の参照に使う。
 | `base_ux_checklist_high.md` | UX チェックリスト（HIGH: UI実装・レビュー時） |
 | `base_ux_checklist_medium.md` | UX チェックリスト（MEDIUM/LOW: 該当機能の実装時） |
 | `base_ui_motion.md` | UIの触感・質感（アニメーション・インタラクションフィードバック・ジェスチャー応答） |
+| `base_storybook.md` | Storybook + AI 連携（MCP server + Manifest）セットアップ・Story 作成ルール |
 | `base_claude_md_knowledge.md` | CLAUDE.md の設計・運用に関する知識まとめ |
 | `base_skill_md_prompt.md` | SKILL.md 生成プロンプト |
 
@@ -64,7 +65,7 @@ bootstrap guide の生成・更新と、各種設定の参照に使う。
 
 | ファイル | 内容 |
 |---|---|
-| `framework_nextjs.md` | Next.js (App Router) + shadcn/ui 固有の設定 |
+| `framework_nextjs.md` | Next.js (App Router) + shadcn/ui + Storybook 固有の設定 |
 | `framework_astro.md` | Astro 固有の設定（CMS はプロジェクトごとに選択） |
 | `framework_wordpress.md` | WordPress / SWELL 子テーマ固有の設定 |
 
@@ -94,7 +95,7 @@ bootstrap guide は `base_*` と `framework_*` を組み合わせた成果物と
 
 ```
 base_harness.md, base_security_env.md, base_security_code.md,
-base_codex_review.md, base_a11y.md, base_ui_motion.md, framework_nextjs.md を参照して、
+base_codex_review.md, base_a11y.md, base_ui_motion.md, base_storybook.md, framework_nextjs.md を参照して、
 Next.js プロジェクトのセットアップ手順を Phase 0 から順番に実行できる
 project_bootstrap_guide_nextjs.md を生成してください。
 ```
@@ -135,6 +136,7 @@ base_security_env.md を更新しました。
 | ローカル環境 | `pnpm dev` | `pnpm dev` | wp-env（Docker） |
 | セキュアコーディング | TypeScript / Node.js ルール | TypeScript / Node.js ルール | PHP WordPress ルール |
 | UI Motion | Framer Motion パターン含む | Framer Motion パターン含む | CSS のみ（参考適用） |
+| Storybook | MCP server + Manifest 連携 | 将来対応可 | 対象外 |
 
 ---
 
